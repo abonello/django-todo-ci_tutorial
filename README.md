@@ -1370,7 +1370,7 @@ The Procfile tells heroku how to run the application.
 ### Create a Procfile
 
 ```bash 
-(master) $ echo web:gunicorn django_todo.wsgi:application > Procfile
+(master) $ echo web: gunicorn django_todo.wsgi:application > Procfile
 ```
 
 This code tells heroku that this is a web application, the server to use is 
@@ -1378,4 +1378,16 @@ gunicorn. ie. Use gunicorn to run this wsgi application inside our django_todo
 project. We are using gunicorn server instead of django's built in server. This 
 is a way of saying "python manage.py runserver".  
 Notice that Procfile does not have an extension.
+
+The procfile was missing a space between web: and gunicorn. This caused the 
+deployment to fail. I fixed this and now the app works.
+
+The procfile now looks like this:
+
+```
+web: gunicorn django_todo.wsgi:application
+```
+
+Althought the application is now recognised by heroku we see another error. 
+This is a disallowed host error which we will fix in settings's ALLOWED_HOSTS.
 
