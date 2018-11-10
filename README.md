@@ -1396,3 +1396,52 @@ Updated settings.py
 ALLOWED_HOSTS = ['django-todo01-anthonybstudent.c9users.io',
                  'ab-django-todo1.herokuapp.com']
 ```
+
+### Connecting github with Heroku
+
+In heroku dashboard, go to the Deploy tab.  
+In deplyment method select the GitHub option.  
+Click on the `connect to github` button.  
+Authorize heroku by entering the password.  
+Enter the repo name and click on the `search` button.  
+Once the repo has been found click on `connect`.  
+
+### Automating Deployment Using GitHub
+
+Using environment variables. We are running this project both on c9 and on 
+heroku.  
+
+We can set environment variables on the operating system level and read them 
+from there instead of a repository.  
+
+#### Allowed hosts
+
+In systems.py we are using two allowed hosts. We can store these in environment 
+variables. We can replace the url for c9 with `os.environ.get('C9_HOSTNAME')`. 
+The variable C9_HOSTNAME exist on the operating system level of every cloud 9 
+workspace, we can just read it from there. For the heroku url, we can replace it 
+with `os.environ.get('HOSTNAME')`. We will then set this in heroku.  
+
+
+Another thing we can change to an environment variable is the database connection 
+string. We can replace this with `os.environ.get('DATABASE_URL')`. DATABASE_URL 
+is the name of the variable on heroku.
+
+So now we have:
+
+```python 
+ALLOWED_HOSTS = [os.environ.get('C9_HOSTNAME'),
+                 os.environ.get('HOSTNAME')]
+
+DATABASES = {
+    'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+}
+```
+
+Over to heroku we will set the hostname. Go to the settings tab. Copy the app's 
+url and click the `Reveal Config Vars`. Create a new key HOSTNAME with the url 
+we just copied as the value.
+```
+key: HOSTNAME value: ab-django-todo1.herokuapp.com/
+```
+
