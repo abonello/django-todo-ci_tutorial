@@ -1446,3 +1446,12 @@ key: HOSTNAME value: ab-django-todo1.herokuapp.com/
 ```
 
 Pushed to github which will update/deploy to heroku.
+
+Update something to check that it works. We are changing the tile of the page. 
+Currentlyt the tile of todo_list.html is document. Change this to Todo List.  
+
+Add, commit and push this change.
+
+I saw that heroku was not deploying from github. In the deploy tab there is a 
+button `Enable Automatic Deploys`. I clicked that and now I am going to push to 
+github again.
