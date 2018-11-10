@@ -1160,10 +1160,163 @@ $ sudo pip3 install gunicorn
 $ sudo pip3 install psycopg2
 $ pip3 freeze --local > requirements.txt
 
+
+Before creating the app make sure that git is initialised. In this way
+when the app is created, heroku will generate the necessary remotes. Otherwise
+these have to be created manually.
+
+```bash
+git init
+git add .
+git commit -m"Initial commit."
+```
+
+We might want to .gitignore some files.
+
+
+
 Create a new heroku app.
- 
-heroku create --region eu
 
-$ heroku apps:create [APP] --region eu
+```bash
+$ heroku login
+$ heroku apps
+$ heroku create ab-django-todo1 --region eu
+Creating ⬢ ab-django-todo1... done, region is eu
+https://ab-django-todo1.herokuapp.com/ | https://git.heroku.com/ab-django-todo1.git
+```
 
-$ heroku auth:login
+NB: If git was not initialised before the app was created, then we need to 
+initialise it now:
+```bash 
+$ git remote -v
+fatal: Not a git repository (or any of the parent directories): .git
+$ git init
+Initialized empty Git repository in /home/ubuntu/workspace/.git/
+(master) $ git remote -v
+(master) $ git add .
+(master) $ git status
+......
+(master) $ git commit -m"Initial commit."
+[master (root-commit) c2f7900] Initial commit.
+ 48 files changed, 14185 insertions(+)
+ .......
+(master) $ git status
+On branch master
+nothing to commit, working tree clean
+
+(master) $ git remote add heroku https://git.heroku.com/ab-django-todo1.git                                      
+(master) $ git remote -v
+heroku  https://git.heroku.com/ab-django-todo1.git (fetch)
+heroku  https://git.heroku.com/ab-django-todo1.git (push)
+(master) $ heroku apps
+=== play@anthonybonello.co.uk Apps
+ab-django-todo1 (eu)
+```
+
+Looking at information about the heroku app from the toolbelt
+
+```bash 
+(master) $ heroku apps
+=== play@anthonybonello.co.uk Apps
+ab-django-todo1 (eu)
+
+(master) $ heroku dashboard
+ ▸    Add apps to this dashboard by favoriting them with heroku apps:favorites:add
+See all add-ons with heroku addons
+See all apps with heroku apps --all
+
+See other CLI commands with heroku help
+
+
+
+(master) $ heroku help
+```
+
+### Create a new database on heroku
+
+Heroku uses addons for setting up databases.
+
+```bash 
+(master) $ heroku addons:create heroku-postgresql:hobby-dev
+Creating heroku-postgresql:hobby-dev on ⬢ ab-django-todo1... free
+Database has been created and is available
+ ! This database is empty. If upgrading, you can transfer
+ ! data from another database with pg:copy
+Created postgresql-animate-27919 as DATABASE_URL
+Use heroku addons:docs heroku-postgresql to view documentation
+```
+We specify the database we want and the level of subscription we want.
+
+### Connecting to the remote database
+
+In heroku dashboard go to the settings tab and click on `Reveal Config Vars`.
+We see that a variable entry was added:
+`DATABASE_URL : postgres://lqlyhqrorqqbis:dadc7a299f8468918e2a75ac48aada500cd59c010fc453220e2f7a0fe88020a0@ec2-54-246-86-167.eu-west-1.compute.amazonaws.com:5432/dm1ijrs49r7h7`
+
+It contains the url for the database. Install `dj_database_url` which allows us to 
+parse database urls. Update the `requirements.txt`.
+
+In our project terminal:
+```bash
+(master) $ sudo pip3 install dj_database_url
+Downloading/unpacking dj-database-url
+  Downloading dj_database_url-0.5.0-py2.py3-none-any.whl
+Installing collected packages: dj-database-url
+Successfully installed dj-database-url
+Cleaning up...
+(master) $ pip3 freeze --local >requirements.txt
+```
+
+Run heroku config to see the details about the database.
+```bash 
+(master) $ heroku config
+=== ab-django-todo1 Config Vars
+DATABASE_URL: postgres://lqlyhqrorqqbis:dadc7a299f8468918e2a75ac48aada500cd59c010fc453220e2f7a0fe88020a0@ec2-54-246-86-167.eu-west-1.compute.amazonaws.com:5432/dm1ijrs49r7h7
+```
+
+### Update settings.py file
+
+Look for the databases configuration. Comment out the existing database which 
+points to sqlite. Replace it with the following code. Remember to import 
+dj_database_url.
+
+```python3 
+import dj_database_url
+
+
+DATABASES = {
+    'default': dj_database_url.parse("postgres://lqlyhqrorqqbis:dadc7a299f8468918e2a75ac48aada500cd59c010fc453220e2f7a0fe88020a0@ec2-54-246-86-167.eu-west-1.compute.amazonaws.com:5432/dm1ijrs49r7h7")
+}
+```
+
+The string passed to the parser comes from heroku's config variables. This can
+be accessed from the `dashboard > settings` tab, or by using the `heroku config` 
+in the terminal.
+
+Now we need to migrate our model to this new database.
+
+```bash 
+(master) $ python3 manage.py migrate
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, sessions, todo
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying sessions.0001_initial... OK
+  Applying todo.0001_initial... OK
+```
+We have successfully connected to a postgres database hosted on heroku through 
+django.
+
+
+
