@@ -1339,3 +1339,43 @@ origin  https://github.com/abonello/django-todo-ci_tutorial.git (push)
 (master) $ git push origin master
 
 ```
+
+Push latest changes to heroku
+```bash 
+(master) $ git push heroku master
+```
+This fails and we need to add some configuration settings. The fail messages 
+gives us the information we need to correct this.
+
+
+```bash 
+(master) $ heroku config:set DISABLE_COLLECTSTATIC=1
+Setting DISABLE_COLLECTSTATIC and restarting ⬢ ab-django-todo1... done, v5
+DISABLE_COLLECTSTATIC: 1
+```
+This will turn off the collection of any static files like css and js.
+We do not have a process to deal with that at the moment.  
+Do another push.
+
+```bash 
+(master) $ git push heroku master
+```
+~~And this time it works well.~~ - Not really. We have a warning:  
+Procfile declares types -> (none)
+
+Sometimes we can get a warning about a missing `Procfile`.
+And if we look at the logs we see we see error messages saying: "No web processes running".
+The Procfile tells heroku how to run the application.
+
+### Create a Procfile
+
+```bash 
+(master) $ echo web:gunicorn django_todo.wsgi:application > Procfile
+```
+
+This code tells heroku that this is a web application, the server to use is 
+gunicorn. ie. Use gunicorn to run this wsgi application inside our django_todo 
+project. We are using gunicorn server instead of django's built in server. This 
+is a way of saying "python manage.py runserver".  
+Notice that Procfile does not have an extension.
+
