@@ -1442,8 +1442,14 @@ Over to heroku we will set the hostname. Go to the settings tab. Copy the app's
 url and click the `Reveal Config Vars`. Create a new key HOSTNAME with the url 
 we just copied as the value.
 ```
-key: HOSTNAME value: ab-django-todo1.herokuapp.com/
+key: HOSTNAME value: ab-django-todo1.herokuapp.com
 ```
+*******************************************************
+**NB: This is wrong:**  
+key: HOSTNAME value: ab-django-todo1.herokuapp.com/  
+corrected as above. Remove the final slash.
+*******************************************************
+
 
 Pushed to github which will update/deploy to heroku.
 
