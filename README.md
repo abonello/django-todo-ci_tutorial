@@ -1461,3 +1461,56 @@ Add, commit and push this change.
 I saw that heroku was not deploying from github. In the deploy tab there is a 
 button `Enable Automatic Deploys`. I clicked that and now I am going to push to 
 github again.
+
+## Development Environment
+
+We need to be able to switch between SQlite and PostgreSQL depending on whether 
+we are developing or deployed. This will also control if Debug is set to true 
+or false.
+
+In settings.py set a variable called `development` and set it to true if we are 
+in development otherwise set it to false so that we do not use production settings.
+
+```python 
+if os.environ.get('DEVELOPMENT'):
+    development = True
+else:
+    development = False
+```
+
+We can now set `DEBUG = development`. In this way debug will be turned on 
+when in development and off when we are in production automatically. 
+
+
+We also need to set the correct database depending on whether we are in 
+development or production.
+```python 
+if development:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+    
+else:
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+    }
+```
+
+Now we need to create the `DEVELOPMENT` environment variable on c9.
+`bash 
+(master) $ export DEVELOPMENT=1
+`
+And now it works on c9. Notice that the SQlite3 database contains different 
+data than the postgrSQL database that we are using on heroku.
+
+Exporting the `DEVELOPMENT` environment variable in this way will only work 
+until this terminal is closed. We want something more permanent.
+
+From the cogwheel select `show hidden files` and `show home in favourites`. 
+Open `.bashrc` file and we will include this export line of code at the bottom.
+`.bashrc` file is run every time that the bash terminal is opened so now this 
+variable will be set  every time.
+
