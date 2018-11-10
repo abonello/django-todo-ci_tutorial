@@ -1391,3 +1391,8 @@ web: gunicorn django_todo.wsgi:application
 Althought the application is now recognised by heroku we see another error. 
 This is a disallowed host error which we will fix in settings's ALLOWED_HOSTS.
 
+Updated settings.py
+```python 
+ALLOWED_HOSTS = ['django-todo01-anthonybstudent.c9users.io',
+                 'ab-django-todo1.herokuapp.com']
+```
