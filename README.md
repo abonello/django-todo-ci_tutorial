@@ -1319,4 +1319,23 @@ We have successfully connected to a postgres database hosted on heroku through
 django.
 
 
+### Adding github
 
+
+Created a new repository on github. Git is already initialised locally. Add a new 
+remote.
+
+```bash 
+(master) $ git remote add origin https://github.com/abonello/django-todo-ci_tutorial.git
+(master) $ git remote -v
+heroku  https://git.heroku.com/ab-django-todo1.git (fetch)
+heroku  https://git.heroku.com/ab-django-todo1.git (push)
+origin  https://github.com/abonello/django-todo-ci_tutorial.git (fetch)
+origin  https://github.com/abonello/django-todo-ci_tutorial.git (push)
+
+
+(master) $ git add .
+(master) $ git commit -m"connecting to postgres."
+(master) $ git push origin master
+
+```
