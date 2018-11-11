@@ -1514,3 +1514,49 @@ Open `.bashrc` file and we will include this export line of code at the bottom.
 `.bashrc` file is run every time that the bash terminal is opened so now this 
 variable will be set  every time.
 
+### Hiding the SECRET_KEY
+
+Using the environment variables to read values from the system that can be 
+sensitive of pose a security risk if revealed. These may include passwords 
+for database access or SECRET_KEY.
+
+We can retrieve the SECRET_KEY from an environment variable by using this code 
+in settings.py:
+```python 
+SECRET_KEY = os.environ.get('SECRET_KEY')
+```
+
+We will get rid of the default and generate two new secret key, one for running 
+the project on cloud 9 and another for production on heroku.
+
+We can google '*django secret key*'. Among the results there is a link to 
+[Django Secret Key Generator - miniwebtools](https://www.miniwebtool.com/django-secret-key-generator/).
+
+Use this to generate the keys. This will generate a 50 character long secret 
+key. Copy it and store it in `.bashrc`
+
+```
+export SECRET_KEY="-------------------------------------"
+```
+This will be used in cloud9.
+
+Generate a second key. This one is for heroku.
+We can go to the heroku dashboard, then settings tab, reveal config vars and
+create a new key-value pair. Or we can use the terminal:
+
+```bash 
+heroku config:set SECRET_KEY="newly_generated_key"
+```
+This line of code has probelms when the key has !. It thinks that there is an 
+event and complains that it cannot find the event called any set of characters 
+that follow the !
+
+In this case you have two options. Change the ! to something else or set the 
+key-value pair from the heroku dashboard.
+
+The secret key is important because it is used for things like hashing passwords. 
+
+
+
+
+
