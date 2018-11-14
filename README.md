@@ -1556,7 +1556,10 @@ key-value pair from the heroku dashboard.
 
 The secret key is important because it is used for things like hashing passwords. 
 
+We need to restart `.bashrc` for the new local SECRET_KEY to take effect.
 
-
+```bash 
+(master) $ source ~/.bashrc
+```
 
 
